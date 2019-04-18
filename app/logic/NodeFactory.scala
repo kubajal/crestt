@@ -1,5 +1,7 @@
 package logic
 
+import scala.annotation.tailrec
+
 class NodeFactory {
 
   /**
@@ -8,51 +10,42 @@ class NodeFactory {
     * @return
     */
 
-  protected def parse(list: List[Row]): List[Node] = {
+  def parse(level: Int, list: List[Row]): Node = {
     list match {
 
-      case Nil => Nil
-
       // last value of in the file, it doesnt have any children
-      case first :: Nil => List(new Node(first.id, Nil))
+      case first :: Nil => Node(first.id, Nil)
 
       // there are more lines to process
-      case first :: second :: xs => {
+      case first :: xs =>
+          Node(first.id, findRoots(level + 1, Nil, xs))
 
-        // if the following line is tabbed then consume all children of first
-        if (first.level < second.level)
-          Node(first.id, parse(second :: xs)) :: Nil
-
-        // if the following line on the same level then first doesnt have children
-        // and return list of syblings
-        else if(first.level == second.level)
-          Node(first.id, Nil) :: parse(second :: xs)
-
-        // if the following lines level is lower then end the recursion
-        else
-          Node(first.id, Nil) :: Nil
-      }
     }
   }
 
   /**
     * Return those Nodes that are on zero level.
     * @param list List of Rows to be processed
+    * @param level
     * @return List of Nodes that are on zero level
     */
 
-  def findRoots(list: List[Row]): List[Node] = {
-
+  @tailrec
+  final def findRoots(level: Int, accumulator: List[Node], list: List[Row]): List[Node] = {
     list match {
-      case Nil => Nil
+      case Nil => accumulator
       case first :: tail =>
+
           // we found a tree root
-          if(first.level == 0)
-            parse(list) ++ findRoots(tail)
+          if(first.level == level) {
+            findRoots(level, parse(level, list) :: accumulator, tail)
+          }
 
           // look further for a tree root
+          else if (first.level > level)
+            findRoots(level, accumulator, tail)
           else
-            findRoots(tail)
+            accumulator
     }
   }
 }
