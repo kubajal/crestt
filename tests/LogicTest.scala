@@ -1,14 +1,16 @@
 package tests
-import logic.{NodeFactory, Row}
-import org.scalatest.FlatSpec
+import logic.{Node, NodeFactory, Row}
+import org.scalatest.{FlatSpec, PrivateMethodTester}
 
-class NodeFactoryTest extends FlatSpec {
+class NodeFactoryTest extends FlatSpec with PrivateMethodTester{
+
+  val parse = PrivateMethod[List[Node]]('parse)
 
   "parse function" should "return Nil on no rows" in {
 
     val data = Nil
     val parser = new NodeFactory()
-    val result = parser.parse(data)
+    val result = parser.invokePrivate(parse(data))
     assert(result == Nil)
   }
 
@@ -16,7 +18,7 @@ class NodeFactoryTest extends FlatSpec {
 
     val data = Row("a", 0, 1) :: Row("aa", 1, 2) :: Nil
     val parser = new NodeFactory()
-    val root = parser.parse(data)(0)
+    val root = parser.invokePrivate(parse(data))(0)
     assert(root.id == 1)
     assert(root.children.size == 1)
     assert(root.children(0).id == 2)
@@ -27,7 +29,7 @@ class NodeFactoryTest extends FlatSpec {
 
     val data = Row("a", 0, 1) :: Row("b", 0, 2) :: Nil
     val parser = new NodeFactory()
-    val result = parser.parse(data);
+    val result = parser.invokePrivate(parse(data))
     val root1 = result(0)
     val root2 = result(1)
     assert(root1.id == 1)
@@ -40,7 +42,7 @@ class NodeFactoryTest extends FlatSpec {
 
     val data = Row("a", 0, 1) :: Row("aa", 1, 2) :: Row("b", 0, 3) :: Nil
     val parser = new NodeFactory()
-    val result = parser.findRoots(data);
+    val result = parser.findRoots(data)
     assert(result.size == 2)
     val root1 = result(0)
     val root2 = result(1)
@@ -56,7 +58,7 @@ class NodeFactoryTest extends FlatSpec {
 
     val data = Row("a", 0, 1) :: Row("aa", 1, 2) :: Row("ab", 1, 3) :: Row("b", 0, 4) :: Nil
     val parser = new NodeFactory()
-    val result = parser.findRoots(data);
+    val result = parser.findRoots(data)
     assert(result.size == 2)
     val root1 = result(0)
     val root2 = result(1)
