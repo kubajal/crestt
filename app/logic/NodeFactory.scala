@@ -1,6 +1,6 @@
 package logic
 
-class Parser {
+class NodeFactory {
 
   def parse(list: List[Row]): List[Node] = {
     list match {
