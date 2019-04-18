@@ -10,15 +10,17 @@ class NodeFactory {
     * @return
     */
 
-  def parse(level: Int, list: List[Row]): Node = {
+  def parse(level: Int, list: List[Row]): Option[Node] = {
     list match {
 
+      case Nil => None
+
       // last value of in the file, it doesnt have any children
-      case first :: Nil => Node(first.id, Nil)
+      case first :: Nil => Some(Node(first.id, first.value, Nil))
 
       // there are more lines to process
       case first :: xs =>
-          Node(first.id, findRoots(level + 1, Nil, xs))
+        Some(Node(first.id, first.value, findRoots(level + 1, Nil, xs)))
 
     }
   }
@@ -38,7 +40,11 @@ class NodeFactory {
 
           // we found a tree root
           if(first.level == level) {
-            findRoots(level, parse(level, list) :: accumulator, tail)
+            val newNode = parse(level, list)
+            if(newNode.isDefined)
+              findRoots(level, newNode.get :: accumulator, tail)
+            else
+              findRoots(level, accumulator, tail)
           }
 
           // look further for a tree root
