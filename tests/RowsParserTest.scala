@@ -14,11 +14,38 @@ class RowsParserTest extends FlatSpec {
       .foreach(e => assert(e.isFailure))
   }
 
-  "parse function" should "succeed on first level value" in {
+  "parse function" should "succeed on zero level value" in {
 
-    val data = "a;;;1"
+    val data = "a;;;;1"
     val result = parser.parse(0, data).get
     assert(result.level == 0)
+    assert(result.id == 1)
+    assert(result.value == "a")
+  }
+
+  "parse function" should "succeed on first level value" in {
+
+    val data = ";a;;;1"
+    val result = parser.parse(0, data).get
+    assert(result.level == 1)
+    assert(result.id == 1)
+    assert(result.value == "a")
+  }
+
+  "parse function" should "succeed on second level value" in {
+
+    val data = ";;a;;1"
+    val result = parser.parse(0, data).get
+    assert(result.level == 2)
+    assert(result.id == 1)
+    assert(result.value == "a")
+  }
+
+  "parse function" should "succeed on third level value" in {
+
+    val data = ";;;a;1"
+    val result = parser.parse(0, data).get
+    assert(result.level == 3)
     assert(result.id == 1)
     assert(result.value == "a")
   }
