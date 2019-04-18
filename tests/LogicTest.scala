@@ -67,4 +67,24 @@ class NodeFactoryTest extends FlatSpec with PrivateMethodTester{
     assert(root2.id == 4)
     assert(root2.children.size == 0)
   }
+
+  "parse function" should "parse 3 level of rows" in {
+
+    val data = Row("a", 0, 1) :: Row("aa", 1, 2) :: Row("aaa", 2, 3) :: Row("ab", 1, 4) :: Row("aba", 2, 5) :: Nil
+    val parser = new NodeFactory()
+    val result = parser.findRoots(data)
+    assert(result.size == 1)
+    val root = result(0)
+    assert(root.id == 1)
+    assert(root.children.size == 2)
+    assert(root.children(0).id == 2)
+    assert(root.children(0).children.size == 1)
+    assert(root.children(0).children(0).id == 3)
+    assert(root.children(0).children(0).children.size == 0)
+    assert(root.children(1).children.size == 1)
+    assert(root.children(1).id == 4)
+    assert(root.children(1).children.size == 1)
+    assert(root.children(1).children(0).id == 5)
+    assert(root.children(1).children(0).children.size == 0)
+  }
 }
