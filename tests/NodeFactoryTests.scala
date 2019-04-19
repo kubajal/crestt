@@ -1,9 +1,7 @@
-package tests
-import com.fasterxml.jackson.databind.ObjectMapper
-import logic.{Node, NodeFactory, Row}
+import logic.{Node, NodeFactory, ParsedRow}
 import org.scalatest.{FlatSpec, PrivateMethodTester}
 
-class NodeFactoryTest extends FlatSpec {
+class NodeFactoryTests extends FlatSpec {
 
   val parser = new NodeFactory()
 
@@ -16,7 +14,7 @@ class NodeFactoryTest extends FlatSpec {
 
   "parse function" should "parse one parent and one child" in {
 
-    val data = Row("a", 0, 1) :: Row("aa", 1, 2) :: Nil
+    val data = ParsedRow("a", 0, 1) :: ParsedRow("aa", 1, 2) :: Nil
     val root = parser.parse(0, data).get
     assert(root.id == 1)
     assert(root.name == "a")
@@ -27,7 +25,7 @@ class NodeFactoryTest extends FlatSpec {
 
   "parse function" should "parse two parents" in {
 
-    val data = Row("a", 0, 1) :: Row("b", 0, 2) :: Nil
+    val data = ParsedRow("a", 0, 1) :: ParsedRow("b", 0, 2) :: Nil
     val result = parser.findRoots(0, Nil, data)
     val root1 = result(0)
     val root2 = result(1)
@@ -41,7 +39,7 @@ class NodeFactoryTest extends FlatSpec {
 
   "parse function" should "prase parent, child, parent" in {
 
-    val data = Row("a", 0, 1) :: Row("aa", 1, 2) :: Row("b", 0, 3) :: Nil
+    val data = ParsedRow("a", 0, 1) :: ParsedRow("aa", 1, 2) :: ParsedRow("b", 0, 3) :: Nil
     val result = parser.findRoots(0, Nil, data)
     assert(result.size == 2)
     val root1 = result(0)
@@ -58,7 +56,7 @@ class NodeFactoryTest extends FlatSpec {
 
   "parse function" should "parse parent, child, child, parent" in {
 
-    val data = Row("a", 0, 1) :: Row("aa", 1, 2) :: Row("ab", 1, 3) :: Row("b", 0, 4) :: Nil
+    val data = ParsedRow("a", 0, 1) :: ParsedRow("aa", 1, 2) :: ParsedRow("ab", 1, 3) :: ParsedRow("b", 0, 4) :: Nil
     val result = parser.findRoots(0, Nil, data)
     assert(result.size == 2)
     val root2 = result(0)
@@ -71,7 +69,7 @@ class NodeFactoryTest extends FlatSpec {
 
   "parse function" should "parse 3 levels of rows" in {
 
-    val data = Row("a", 0, 1) :: Row("aa", 1, 2) :: Row("aaa", 2, 3) :: Row("ab", 1, 4) :: Row("aba", 2, 5) :: Nil
+    val data = ParsedRow("a", 0, 1) :: ParsedRow("aa", 1, 2) :: ParsedRow("aaa", 2, 3) :: ParsedRow("ab", 1, 4) :: ParsedRow("aba", 2, 5) :: Nil
     val result = parser.findRoots(0, Nil, data)
     assert(result.size == 1)
     val root = result(0)
@@ -86,12 +84,12 @@ class NodeFactoryTest extends FlatSpec {
     assert(root.nodes(1).id == 2)
     assert(root.nodes(1).nodes.size == 1)
     assert(root.nodes(1).nodes(0).id == 3)
-    assert(root.nodes(1).nodes(0).nodes.size == 0)
+    assert(root.nodes(1).nodes(0).nodes.isEmpty)
   }
 
   "parse function" should "parse 4 levels of rows" in {
 
-    val data = Row("a", 0, 1) :: Row("aa", 1, 2) :: Row("aaa", 2, 3) :: Row("aaaa", 3, 4) :: Row("b", 0, 5) :: Nil
+    val data = ParsedRow("a", 0, 1) :: ParsedRow("aa", 1, 2) :: ParsedRow("aaa", 2, 3) :: ParsedRow("aaaa", 3, 4) :: ParsedRow("b", 0, 5) :: Nil
     val result = parser.findRoots(0, Nil, data)
     assert(result.size == 2)
     val level0 = result.last
@@ -101,7 +99,7 @@ class NodeFactoryTest extends FlatSpec {
     val level2 = level1.nodes.head
     assert(level2.nodes.size == 1)
     val level3 = level2.nodes.head
-    assert(level3.nodes.size == 0)
+    assert(level3.nodes.isEmpty)
     assert(level3.name == "aaaa")
     val b = result.head
     assert(b.nodes.isEmpty)
@@ -111,8 +109,8 @@ class NodeFactoryTest extends FlatSpec {
 
   "Node.toString" should "have JSON format" in {
 
-    val data = Row("a", 0, 1) :: Row("aa", 1, 2) :: Nil
-    val result = parser.findRoots(0, Nil, data)(0)
+    val data = ParsedRow("a", 0, 1) :: ParsedRow("aa", 1, 2) :: Nil
+    val result = parser.findRoots(0, Nil, data).head
     assert(result.toString == """{"id":1,"name":"a","nodes":[{"id":2,"name":"aa","nodes":[]}]}""" )
   }
 }

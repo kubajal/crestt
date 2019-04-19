@@ -18,3 +18,7 @@ unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/
 libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2"
 
 libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.9.8"
+libraryDependencies ++= Seq(
+  "org.apache.poi" % "poi" % "3.9",
+  "org.apache.poi" % "poi-ooxml" % "3.9",
+  "org.apache.poi" % "poi-ooxml-schemas" % "3.9")
