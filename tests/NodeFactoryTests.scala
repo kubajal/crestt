@@ -27,8 +27,8 @@ class NodeFactoryTests extends FlatSpec {
 
     val data = ParsedRow("a", 0, 1) :: ParsedRow("b", 0, 2) :: Nil
     val result = parser.findRoots(0, Nil, data)
-    val root1 = result.head.get
-    val root2 = result(1).get
+    val root2 = result.head.get
+    val root1 = result(1).get
     assert(root2.id == 1)
     assert(root2.nodes.isEmpty)
     assert(root2.name == "a")
@@ -42,8 +42,8 @@ class NodeFactoryTests extends FlatSpec {
     val data = ParsedRow("a", 0, 1) :: ParsedRow("aa", 1, 2) :: ParsedRow("b", 0, 3) :: Nil
     val result = parser.findRoots(0, Nil, data)
     assert(result.size == 2)
-    val root1 = result.head.get
-    val root2 = result(1).get
+    val root2 = result.head.get
+    val root1 = result(1).get
     assert(root2.id == 1)
     assert(root2.name == "a")
     assert(root2.nodes.size == 1)
@@ -59,8 +59,8 @@ class NodeFactoryTests extends FlatSpec {
     val data = ParsedRow("a", 0, 1) :: ParsedRow("aa", 1, 2) :: ParsedRow("ab", 1, 3) :: ParsedRow("b", 0, 4) :: Nil
     val result = parser.findRoots(0, Nil, data)
     assert(result.size == 2)
-    val root2 = result.head.get
-    val root1 = result(1).get
+    val root1 = result.head.get
+    val root2 = result(1).get
     assert(root1.id == 1)
     assert(root1.nodes.size == 2)
     assert(root2.id == 4)
@@ -76,14 +76,14 @@ class NodeFactoryTests extends FlatSpec {
     assert(root.id == 1)
     assert(root.name == "a")
     assert(root.nodes.size == 2)
-    assert(root.nodes.head.id == 4)
+    assert(root.nodes.head.id == 2)
     assert(root.nodes.head.nodes.size == 1)
-    assert(root.nodes.head.nodes.head.id == 5)
+    assert(root.nodes.head.nodes.head.id == 3)
     assert(root.nodes.head.nodes.head.nodes.isEmpty)
     assert(root.nodes(1).nodes.size == 1)
-    assert(root.nodes(1).id == 2)
+    assert(root.nodes(1).id == 4)
     assert(root.nodes(1).nodes.size == 1)
-    assert(root.nodes(1).nodes.head.id == 3)
+    assert(root.nodes(1).nodes.head.id == 5)
     assert(root.nodes(1).nodes.head.nodes.isEmpty)
   }
 
@@ -92,7 +92,7 @@ class NodeFactoryTests extends FlatSpec {
     val data = ParsedRow("a", 0, 1) :: ParsedRow("aa", 1, 2) :: ParsedRow("aaa", 2, 3) :: ParsedRow("aaaa", 3, 4) :: ParsedRow("b", 0, 5) :: Nil
     val result = parser.findRoots(0, Nil, data)
     assert(result.size == 2)
-    val level0 = result.last.get
+    val level0 = result.head.get
     assert(level0.nodes.size == 1)
     val level1 = level0.nodes.head
     assert(level1.nodes.size == 1)
@@ -101,7 +101,7 @@ class NodeFactoryTests extends FlatSpec {
     val level3 = level2.nodes.head
     assert(level3.nodes.isEmpty)
     assert(level3.name == "aaaa")
-    val b = result.head.get
+    val b = result.last.get
     assert(b.nodes.isEmpty)
     assert(b.id == 5)
     assert(b.name == "b")

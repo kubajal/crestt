@@ -10,9 +10,9 @@ class ExcelReaderTests extends FlatSpec {
       .getJsons("tests/resources/test1.xlsx")
 
     assert(jsons.contains("""{"id":11,"name":"D","nodes":[{"id":12,"name":"DA","nodes":[]}]}"""))
-    assert(jsons.contains("""{"id":7,"name":"C","nodes":[{"id":8,"name":"CA","nodes":[{"id":10,"name":"CA2","nodes":[]},{"id":9,"name":"CA1","nodes":[]}]}]}"""))
+    assert(jsons.contains("""{"id":7,"name":"C","nodes":[{"id":8,"name":"CA","nodes":[{"id":9,"name":"CA1","nodes":[]},{"id":10,"name":"CA2","nodes":[]}]}]}"""))
     assert(jsons.contains("""{"id":6,"name":"B","nodes":[]}"""))
-    assert(jsons.contains("""{"id":1,"name":"A","nodes":[{"id":5,"name":"AB","nodes":[]},{"id":2,"name":"AA","nodes":[{"id":4,"name":"AA2","nodes":[]},{"id":3,"name":"AA1","nodes":[]}]}]}"""))
+    assert(jsons.contains("""{"id":1,"name":"A","nodes":[{"id":2,"name":"AA","nodes":[{"id":3,"name":"AA1","nodes":[]},{"id":4,"name":"AA2","nodes":[]}]},{"id":5,"name":"AB","nodes":[]}]}"""))
     jsons.foreach(e => println(e))
   }
 
