@@ -13,15 +13,16 @@ class NodeFactory {
   final def parse(level: Int, list: List[ParsedRow]): Option[Node] = {
     list match {
 
-      case Nil => None
-
-      // last value of in the file, it doesnt have any children
-      case first :: Nil => Some(Node(first.id, first.value, Nil))
+      case Nil => {
+        None
+      }
 
       // there are more lines to process
       case first :: xs =>
-        Some(Node(first.id, first.value, findRoots(level + 1, Nil, xs)))
-
+        if(first.level != level)
+          throw new Exception("Invalid indentation in the given rows")
+        else
+          Some(Node(first.id, first.value, for(Some(child) <- findRoots(level + 1, Nil, xs)) yield child ))
     }
   }
 
@@ -33,7 +34,7 @@ class NodeFactory {
     */
 
   @tailrec
-  final def findRoots(level: Int, accumulator: List[Node], list: List[ParsedRow]): List[Node] = {
+  final def findRoots(level: Int, accumulator: List[Option[Node]], list: List[ParsedRow]): List[Option[Node]] = {
     list match {
       case Nil => accumulator
       case first :: tail =>
@@ -41,10 +42,7 @@ class NodeFactory {
           // a tree root found, process its children
           if(first.level == level) {
             val newNode = parse(level, list)
-            if(newNode.isDefined)
-              findRoots(level, newNode.get :: accumulator, tail)
-            else
-              findRoots(level, accumulator, tail)
+              findRoots(level, newNode :: accumulator, tail)
           }
 
           // look further for a tree root
@@ -55,5 +53,15 @@ class NodeFactory {
           else // (first.level < second.level)
             accumulator
     }
+  }
+
+  def parse(list: List[ParsedRow]): List[Node] = {
+
+    for
+      {
+        root <- findRoots(0, Nil, list)
+        if(root.isDefined)
+      }
+      yield root.get
   }
 }

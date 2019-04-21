@@ -1,5 +1,5 @@
 package logic
-import org.apache.poi.ss.usermodel.Row
+import org.apache.poi.ss.usermodel.{Cell, Row}
 
 import scala.util.{Failure, Try}
 import scala.util.parsing.combinator._
@@ -7,7 +7,7 @@ import scala.collection.JavaConverters._
 
 class RowsParser {
 
-  val columnSeparator = ";"
+  private val columnSeparator = ";"
 
   def parse(level: Int, csv: String): ParsedRow ={
     if(csv.startsWith(columnSeparator))
@@ -24,13 +24,32 @@ class RowsParser {
     }
   }
 
+  /**
+    * Helper function that sanitizes null strings.
+    * @param s string that can be null
+    * @return null replaced with ""
+    */
+  private def checkIfNull(s: String): String = {
+    if(s == null) "" else s
+  }
+
   def parse(row: Row) : Try[ParsedRow] = {
 
     Try({
       val csv = row.cellIterator()
         .asScala
-        .map(e => e.getStringCellValue)
-        .reduce(_ + columnSeparator + _)
+        .map(e => {
+          e.getCellType match {
+            case Cell.CELL_TYPE_NUMERIC =>
+              e.setCellType(Cell.CELL_TYPE_STRING)
+            case Cell.CELL_TYPE_STRING => // ok, continue
+            case Cell.CELL_TYPE_BLANK => // ok, continue
+            case _ => throw new Exception("Unsupported cell type")
+          }
+          e.getStringCellValue
+        })
+        .map(e => checkIfNull(e))
+        .reduce((x, y) => x + columnSeparator + y)
 
       parse(0, csv)
     })

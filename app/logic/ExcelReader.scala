@@ -2,16 +2,24 @@ package logic
 
 import java.io.File
 
-import org.apache.poi.ss.usermodel.WorkbookFactory
-import scala.collection.JavaConverters._
+import javax.inject.Singleton
+import org.apache.poi.ss.usermodel.{Row, WorkbookFactory}
 
+import scala.collection.JavaConverters._
 import scala.io.Source
 
-class ExcelReader(path: String) {
-  def getLines: Iterator[String] = {
-    val workbook = WorkbookFactory.create(new File(path))
-    val sheet = workbook.getSheetAt(0)
-    sheet.rowIterator().asScala.map(e => e.toString) //todo: fix this
+@Singleton
+class ExcelReader(private val path: String) {
 
+  /**
+    * Read rows in a file without the header.
+    * @return iterator to all but header row in the file
+    */
+  def getPoiRows: Iterator[Row] = {
+
+    val file = new File(path)
+    val workbook = WorkbookFactory.create(file)
+    val sheet = workbook.getSheetAt(0)
+    sheet.rowIterator().asScala.drop(0)
   }
 }

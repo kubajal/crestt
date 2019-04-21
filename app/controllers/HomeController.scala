@@ -1,6 +1,7 @@
 package controllers
 
 import javax.inject._
+import logic.XSLX2JSON
 import play.api.mvc._
 
 /**
@@ -17,7 +18,9 @@ class HomeController @Inject()(cc: ControllerComponents) extends AbstractControl
    * a path of `/`.
    */
   def index = Action {
-    Ok(views.html.index("Your new application is ready."))
+    val converter = new XSLX2JSON
+    val jsonString = converter.loadJson("test1.xlsx")
+    Ok(views.html.index("Json: "))
   }
 
 }

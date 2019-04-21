@@ -12,12 +12,29 @@
         @* Here's where we render the page title `String`. *@
         <title>@title</title>
         <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/json-viewer.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
-        <script src="@routes.Assets.versioned("javascripts/hello.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.versioned("javascripts/json-viewer.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.versioned("javascripts/zadanie2.js")" type="text/javascript"></script>
+        <script src="https://code.jquery.com/jquery-3.4.0.min.js" integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg=" crossorigin="anonymous"></script>
     </head>
     <body>
         @* And here's where we render the `Html` object containing
          * the page content. *@
+
+        <section id="top">
+            <div class="wrapper">
+                <h1>Zadanie rekrutacyjne</h1>
+            </div>
+        </section>
+        <br>
         @content
+        <br>
+        <div id="json"></div>
     </body>
+    <script>
+        $.get( "json/test1.xlsx", function( data, status ) {
+            showJSON(data, "#json")
+        });
+    </script>
 </html>
