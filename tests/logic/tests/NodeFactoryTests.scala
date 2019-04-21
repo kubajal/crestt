@@ -1,5 +1,7 @@
-import logic.{Node, NodeFactory, ParsedRow}
-import org.scalatest.{FlatSpec, PrivateMethodTester}
+package logic.tests
+
+import logic.{NodeFactory, ParsedRow}
+import org.scalatest.FlatSpec
 
 class NodeFactoryTests extends FlatSpec {
 

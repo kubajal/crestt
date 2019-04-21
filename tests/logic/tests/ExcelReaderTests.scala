@@ -1,4 +1,6 @@
-import logic.{ExcelReader, NodeFactory, ParsedRow, XLSX2JSON}
+package logic.tests
+
+import logic.XLSX2JSON
 import org.scalatest.FlatSpec
 
 class ExcelReaderTests extends FlatSpec {

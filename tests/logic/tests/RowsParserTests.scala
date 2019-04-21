@@ -1,6 +1,6 @@
-import logic.{ParsedRow, RowsParser}
-import org.apache.poi.ss.usermodel.Row
-import org.apache.poi.xssf.usermodel.{XSSFRow, XSSFWorkbook}
+package logic.tests
+
+import logic.RowsParser
 import org.scalatest.FlatSpec
 import utils.POIRowCreator
 
