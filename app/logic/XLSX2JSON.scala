@@ -4,7 +4,7 @@ import javax.inject.Singleton
 
 import scala.util.Success
 
-class XSLX2JSON {
+class XLSX2JSON {
 
   def loadJson(path: String): String = {
 

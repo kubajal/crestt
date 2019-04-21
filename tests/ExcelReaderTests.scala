@@ -1,11 +1,11 @@
-import logic.{ExcelReader, NodeFactory, ParsedRow, XSLX2JSON}
+import logic.{ExcelReader, NodeFactory, ParsedRow, XLSX2JSON}
 import org.scalatest.FlatSpec
 
 class ExcelReaderTests extends FlatSpec {
 
   "parseToJson" should "return correct JSON strings given a correct .xlsx file" in {
 
-    val processor = new XSLX2JSON
+    val processor = new XLSX2JSON
     val jsons = processor
       .getJsons("tests/resources/test1.xlsx")
 
@@ -18,7 +18,7 @@ class ExcelReaderTests extends FlatSpec {
 
   "parseToJson" should "return empty JSON string list given a completly invalid .xlsx file" in {
 
-    val processor = new XSLX2JSON
+    val processor = new XLSX2JSON
     val jsons = processor
       .getJsons("tests/resources/invalid1.xlsx")
 
@@ -27,11 +27,11 @@ class ExcelReaderTests extends FlatSpec {
 
   "parseToJson" should "return empty JSON string list given a .xlsx file with wrong indentation" in {
 
-    val processor = new XSLX2JSON
+    val processor = new XLSX2JSON
     val jsons = processor
       .getJsons("tests/resources/invalid2.xlsx")
 
-    println(jsons(0))
+    println(jsons.head)
     assert(jsons.size == 1)
     assert(!jsons.head.contains(""""id":2"""))
   }

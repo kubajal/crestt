@@ -1,7 +1,7 @@
 package controllers
 
 import javax.inject._
-import logic.XSLX2JSON
+import logic.XLSX2JSON
 import play.api.mvc._
 import play.twirl.api.Html
 

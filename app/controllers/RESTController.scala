@@ -1,7 +1,7 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-import logic.XSLX2JSON
+import logic.XLSX2JSON
 import play.mvc.Controller
 import play.api.mvc._
 import play.api.libs.json.Json
@@ -9,7 +9,7 @@ import play.api.libs.json.Json
 @Singleton
 class RESTController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 
-  val converter: XSLX2JSON = new XSLX2JSON
+  val converter: XLSX2JSON = new XLSX2JSON
 
   def getJson(path: String) = Action {
     try{
