@@ -9,7 +9,7 @@ import play.twirl.api.Html
 class HomeController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 
   def index = Action {
-    Ok(views.html.main("Zadanie rekrutacyjne")(Html("")))
+    Ok(views.html.main("Zadanie 2")(Html("")))
   }
 
 }

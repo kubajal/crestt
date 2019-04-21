@@ -26,8 +26,7 @@ class XLSX2JSON {
 
     val successful = for {
       Success(e) <- rows
-    }
-      yield e
+    } yield e
 
     val nodeFactory = new NodeFactory
     nodeFactory
