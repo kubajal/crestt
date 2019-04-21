@@ -42,7 +42,7 @@ class NodeFactory {
           // a tree root found, process its children
           if(first.level == level) {
             val newNode = parse(level, list)
-            findRoots(level, newNode :: accumulator, tail)
+            findRoots(level, accumulator :+ newNode, tail)
           }
 
           // look further for a tree root
