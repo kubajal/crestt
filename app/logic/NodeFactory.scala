@@ -1,28 +1,28 @@
 package logic
 
 import scala.annotation.tailrec
+import scala.util.{Failure, Success, Try}
 
 class NodeFactory {
 
   /**
-    * Helper function to parse a subtree.
+    * Parse a subtree.
     * @param list remaining rows to process
     * @return
     */
 
-  final def parse(level: Int, list: List[ParsedRow]): Option[Node] = {
+  final def parse(level: Int, list: List[ParsedRow]): Try[Node] = {
     list match {
 
-      case Nil => {
-        None
-      }
-
+      case Nil => Failure(new Exception("No rows to process"))
       // there are more lines to process
       case first :: xs =>
         if(first.level != level)
-          throw new Exception("Invalid indentation in the given rows")
-        else
-          Some(Node(first.id, first.value, for(Some(child) <- findRoots(level + 1, Nil, xs)) yield child ))
+          throw new Exception("Invalid indentation in the given rows.")
+        else {
+            val children = for(Success(child) <- findRoots(level + 1, Nil, xs)) yield child
+            Try(Node(first.id, first.value, children))
+          }
     }
   }
 
@@ -34,7 +34,7 @@ class NodeFactory {
     */
 
   @tailrec
-  final def findRoots(level: Int, accumulator: List[Option[Node]], list: List[ParsedRow]): List[Option[Node]] = {
+  final def findRoots(level: Int, accumulator: List[Try[Node]], list: List[ParsedRow]): List[Try[Node]] = {
     list match {
       case Nil => accumulator
       case first :: tail =>
@@ -42,7 +42,7 @@ class NodeFactory {
           // a tree root found, process its children
           if(first.level == level) {
             val newNode = parse(level, list)
-              findRoots(level, newNode :: accumulator, tail)
+            findRoots(level, newNode :: accumulator, tail)
           }
 
           // look further for a tree root
@@ -55,13 +55,15 @@ class NodeFactory {
     }
   }
 
+  /**
+    * Return all root-level nodes.
+    * @param list List of ParsedRows to be processed
+    * @return List of root-level Nodes.
+    */
+
   def parse(list: List[ParsedRow]): List[Node] = {
 
-    for
-      {
-        root <- findRoots(0, Nil, list)
-        if(root.isDefined)
-      }
-      yield root.get
+    for(Success(root) <- findRoots(0, Nil, list))
+      yield root
   }
 }

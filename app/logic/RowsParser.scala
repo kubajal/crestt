@@ -9,9 +9,16 @@ class RowsParser {
 
   private val columnSeparator = ";"
 
-  def parse(level: Int, csv: String): ParsedRow ={
+  /**
+    * Parse string in CSV format to ParsedRow (column separator: ';').
+    * @param cellNumber number of processed cell
+    * @param csv CSV row
+    * @return ParsedRow
+    */
+
+  def parse(cellNumber: Int, csv: String): ParsedRow ={
     if(csv.startsWith(columnSeparator))
-      parse(level + 1, csv.tail)
+      parse(cellNumber + 1, csv.tail)
     else {
 
       val split = csv.split(columnSeparator)
@@ -19,8 +26,8 @@ class RowsParser {
       // the remaining string has to start with a string value
       // and end with the ID of the row
       if(split.size != 2)
-        new Exception("Invalid format")
-      ParsedRow(split.head, level, split.last.toInt)
+        new Exception("Invalid format of CSV")
+      ParsedRow(split.head, cellNumber, split.last.toInt)
     }
   }
 
@@ -33,6 +40,12 @@ class RowsParser {
     if(s == null) "" else s
   }
 
+  /**
+    * Create ParsedRow from Apache.POI.Row
+    * @param row Apache.POI.Row
+    * @return ParsedRow
+    */
+
   def parse(row: Row) : Try[ParsedRow] = {
 
     Try({
@@ -40,10 +53,10 @@ class RowsParser {
         .asScala
         .map(e => {
           e.getCellType match {
-            case Cell.CELL_TYPE_NUMERIC =>
+            case Cell.CELL_TYPE_NUMERIC => // getStringCellValue on NUMERIC throws exception, so we have to cast it here to STRING
               e.setCellType(Cell.CELL_TYPE_STRING)
-            case Cell.CELL_TYPE_STRING => // ok, continue
-            case Cell.CELL_TYPE_BLANK => // ok, continue
+            case Cell.CELL_TYPE_STRING => // ok (getStringCellValue doesnt throw exception), continue
+            case Cell.CELL_TYPE_BLANK => // ok (getStringCellValue doesnt throw exception), continue
             case _ => throw new Exception("Unsupported cell type")
           }
           e.getStringCellValue

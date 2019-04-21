@@ -18,7 +18,7 @@ class RESTController @Inject()(cc: ControllerComponents) extends AbstractControl
       Ok(responseBody)
     }
     catch {
-      case e: Exception => NotFound(views.html.notfound(path, e.getLocalizedMessage))
+      case e: Exception => NotFound(views.html.notfound(path))
     }
   }
 }
